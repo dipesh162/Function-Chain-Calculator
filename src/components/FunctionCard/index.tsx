@@ -1,5 +1,3 @@
-import { ChevronDown, Euro } from 'lucide-react'
-
 type Function = {
     id: number
     equation: string
