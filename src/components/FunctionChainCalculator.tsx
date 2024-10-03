@@ -86,10 +86,10 @@ export default function FunctionChainCalculator() {
         const newPaths: string[] = [];
     
         const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
-            const startX = startPos.right;
-            const startY = startPos.top + startPos.height / 2;
-            const endX = endPos.left;
-            const endY = endPos.top + endPos.height / 2;
+            const startX = startPos.right - (8);
+            const startY = startPos.top + startPos.height / 2  - (-1);
+            const endX = endPos.left + (8);
+            const endY = endPos.top + endPos.height / 2   - (-1);
 
             if (pathType === 'quadratic') {
                 // Control point for U shape

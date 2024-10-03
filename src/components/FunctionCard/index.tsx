@@ -30,7 +30,7 @@ const FunctionCard =
     const { inputRef, outputRef } = refObj as FunctionCardRef; // Type casting the ref to FunctionCardRef
 
     return (
-        <div className="shrink-0 bg-white w-[251px] border border-[#DFDFDF] shadow-[0px_0px_6px_0px_rgba(0,0,0,0.05)] rounded-[15px] py-4 px-[20px] relative z-10">
+        <div className="shrink-0 bg-white w-[235px] border border-[#DFDFDF] shadow-[0px_0px_6px_0px_rgba(0,0,0,0.05)] rounded-[15px] py-4 px-[20px] relative z-10">
             <div className="flex gap-[7px] items-center mb-[20px] font-semibold text-[14px] text-[#A5A5A5]">
                 <img src="/images/dots.png" alt="Group" className='mt-1'/> Function: {func.id}
             </div>
