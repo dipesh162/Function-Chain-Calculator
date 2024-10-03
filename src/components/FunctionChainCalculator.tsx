@@ -19,7 +19,7 @@ const initialFunctions: Function[] = [
     { id: 2, equation: '2*x+4', nextFunction: 4, input: 0, output: 0, path: 'cubic'},
     { id: 3, equation: 'x^2+20', nextFunction: null, input: 0, output: 0,},
     { id: 4, equation: 'x-2', nextFunction: 5, input: 0, output: 0, path: 'quadratic' },
-    { id: 5, equation: 'x/2', nextFunction: 3, input: 0, output: 0, path: 'quadratic'  },
+    { id: 5, equation: 'x/2', nextFunction: 3, input: 0, output: 0, path: 'bottomTopQuadratic'  },
 ]
 
 const validateEquation = (equation: string): boolean => {
@@ -29,6 +29,7 @@ const validateEquation = (equation: string): boolean => {
 
 const calculateResult = (x: number, equation: string): number => {
     const sanitizedEquation = equation.replace(/\^/g, '**')
+    console.log(sanitizedEquation)
     return eval(sanitizedEquation.replace(/x/g, x.toString()))
 }
 
@@ -54,34 +55,38 @@ export default function FunctionChainCalculator() {
     const calculatePaths = useCallback(() => {
         const newPaths: string[] = [];
     
-const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
-    const startX = startPos.right;
-    const startY = startPos.top + startPos.height / 2;
-    const endX = endPos.left;
-    const endY = endPos.top + endPos.height / 2;
+        const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
+            const startX = startPos.right;
+            const startY = startPos.top + startPos.height / 2;
+            const endX = endPos.left;
+            const endY = endPos.top + endPos.height / 2;
 
-    if (pathType === 'quadratic') {
-        // Control point for U shape
-        const controlX = (startX + endX) / 2;
-        const controlY = Math.max(startY, endY) + 50; // Adjust this value to control the depth of the "U"
+            if (pathType === 'quadratic') {
+                // Control point for U shape
+                const controlX = (startX + endX) / 2;
+                const controlY = Math.max(startY, endY) + 50; // Adjust this value to control the depth of the "U"
 
-        // Quadratic Bezier curve
-        return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
-    } else if (pathType === 'cubic') {
-        // Control points for S shape
-        const control1X = (startX + endX) / 3;  // First control point on the left
-        const control1Y = startY - 50;           // Pull up for the "S"
-        const control2X = (startX + endX) * 2 / 3; // Second control point on the right
-        const control2Y = endY + 50;              // Pull down for the "S"
+                // Quadratic Bezier curve
+                return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+            } else if (pathType === 'cubic') {
+                // Control points for S shape
+                const control1X = 1029  // First control point on the left
+                const control1Y = 556           // Pull up for the "S"
+                const control2X = 771 // Second control point on the right
+                const control2Y = 525              // Pull down for the "S"
 
-        // Cubic Bezier curve
-        return `M${startX},${startY} C${control1X},${control1Y} ${control2X},${control2Y} ${endX},${endY}`;
-    }
+                return `M${startX},${startY} C${control1X},${control1Y} ${control2X},${control2Y} ${endX},${endY}`;
+            } else if(pathType === 'bottomTopQuadratic'){
+                const controlX = 1264
+                const controlY = 571
 
-    return ''; // Fallback if no path type matches
-}
+                // Quadratic Bezier curve
+                return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;              
+            }
 
-        
+            return ''; // Fallback if no path type matches
+        }
+
     
         functions.forEach((func) => {
             if (func.nextFunction !== null) {
@@ -101,8 +106,6 @@ const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
         setPaths(newPaths);
     }, [functions]);
     
-    
-
 
     // Memoized calculateChain function to avoid re-creation on each render
     const calculateChain = useCallback(() => {
@@ -110,12 +113,14 @@ const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
         const executionOrder = [1, 2, 4, 5, 3]
 
         const updatedFunctions = functions.map(func => ({ ...func }))
-
+        // console.log('113, calculate chain')
         for (const id of executionOrder) {
             const funcIndex = updatedFunctions.findIndex(f => f.id === id)
             if (funcIndex !== -1) {
+                // console.log(117, result)
                 updatedFunctions[funcIndex].input = result
                 result = calculateResult(result, updatedFunctions[funcIndex].equation)
+                console.log(120, result)
                 updatedFunctions[funcIndex].output = result
             }
         }

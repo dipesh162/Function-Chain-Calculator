@@ -1,5 +1,5 @@
 // React
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
+import React, { forwardRef } from "react"
 
 
 // Components
@@ -13,34 +13,25 @@ type Function = {
     output: number
 }
 
+interface FunctionCardRef {
+    inputRef: React.RefObject<HTMLDivElement>;
+    outputRef: React.RefObject<HTMLDivElement>;
+}
+
 interface FunctionCardProps {
     func: Function
     onEquationChange: (id: number, equation: string) => void
+    inputRef: object
 }
   
 
-const FunctionCard = forwardRef<FunctionCardProps> (
-    ({ func, onEquationChange, getPosition }, ref) => {
+const FunctionCard = forwardRef<FunctionCardRef,FunctionCardProps> (
+    ({ func, onEquationChange }, ref) => {
 
-        // const iinputRef = useRef<HTMLDivElement>(null);
-        // const ooutputRef = useRef<HTMLDivElement>(null);
-        const { inputRef, outputRef } = ref; // Destructure the refs from props
-
-
-
-        // useEffect(() => {
-        //     if (iinputRef.current && ooutputRef.current) {
-        //       // Calculate positions
-        //       const inputPosition = iinputRef.current.getBoundingClientRect();
-        //       const outputPosition = ooutputRef.current.getBoundingClientRect();
-          
-        //       // Call the parent function
-        //       getPosition(func.id, inputPosition, outputPosition);
-        //     }
-        //   }, []); // Empty dependency array to trigger on mount
+    const { inputRef, outputRef } = ref as unknown as FunctionCardRef; // Type casting the ref to FunctionCardRef
 
     return (
-        <div ref={ref} className="bg-white w-[251px] border border-[#DFDFDF] shadow-[0px_0px_6px_0px_rgba(0,0,0,0.05)] rounded-[15px] py-4 px-[20px] relative z-10">
+        <div className="shrink-0 bg-white w-[251px] border border-[#DFDFDF] shadow-[0px_0px_6px_0px_rgba(0,0,0,0.05)] rounded-[15px] py-4 px-[20px] relative z-10">
             <div className="flex gap-[7px] items-center mb-[20px] font-semibold text-[14px] text-[#A5A5A5]">
                 <img src="/images/dots.png" alt="Group" className='mt-1'/> Function: {func.id}
             </div>
