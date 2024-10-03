@@ -14,21 +14,24 @@ type Function = {
 }
 
 interface FunctionCardRef {
-    inputRef: React.RefObject<HTMLDivElement>;
-    outputRef: React.RefObject<HTMLDivElement>;
+    inputRef?: React.RefObject<HTMLDivElement> | null;
+    outputRef?: React.RefObject<HTMLDivElement> | null;
 }
 
 interface FunctionCardProps {
     func: Function
     onEquationChange: (id: number, equation: string) => void
-    inputRef: object
+    refObj: any
+    // inputRef: object
+    // inputRef: React.RefObject<HTMLDivElement>;
+    // outputRef: React.RefObject<HTMLDivElement>;
 }
   
 
-const FunctionCard = forwardRef<FunctionCardRef,FunctionCardProps> (
-    ({ func, onEquationChange }, ref) => {
+const FunctionCard =
+    ({ func, onEquationChange, refObj }: FunctionCardProps) => {
 
-    const { inputRef, outputRef } = ref as unknown as FunctionCardRef; // Type casting the ref to FunctionCardRef
+    const { inputRef, outputRef } = refObj as FunctionCardRef; // Type casting the ref to FunctionCardRef
 
     return (
         <div className="shrink-0 bg-white w-[251px] border border-[#DFDFDF] shadow-[0px_0px_6px_0px_rgba(0,0,0,0.05)] rounded-[15px] py-4 px-[20px] relative z-10">
@@ -81,6 +84,6 @@ const FunctionCard = forwardRef<FunctionCardRef,FunctionCardProps> (
             </div>
         </div>
     )
-})
+}
 
 export default FunctionCard

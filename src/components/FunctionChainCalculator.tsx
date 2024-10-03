@@ -180,9 +180,9 @@ export default function FunctionChainCalculator() {
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
-                                ref={{
-                                    inputRef: (el:HTMLDivElement) => (inputRefs.current[func.id] = el),
-                                    outputRef: (el: HTMLDivElement) => (outputRefs.current[func.id] = el),
+                                refObj={{
+                                    inputRef: (el:HTMLDivElement | null) => (inputRefs.current[func.id] = el),
+                                    outputRef: (el: HTMLDivElement | null) => (outputRefs.current[func.id] = el),
                                   }}
                             />
                         ))}
@@ -204,7 +204,7 @@ export default function FunctionChainCalculator() {
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
-                                ref={{
+                                refObj={{
                                     inputRef: (el: HTMLDivElement) => (inputRefs.current[func.id] = el),
                                     outputRef: (el: HTMLDivElement) => (outputRefs.current[func.id] = el),
                                 }}
