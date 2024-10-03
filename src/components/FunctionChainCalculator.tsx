@@ -65,7 +65,21 @@ export default function FunctionChainCalculator() {
     }, [initialInput, JSON.stringify(functions)])
 
     useEffect(()=>{
-        calculatePaths()
+        // Calculate paths initially
+        calculatePaths();
+
+        const handleResize = () => {
+            // Recalculate paths on resize
+            calculatePaths();
+        };
+
+        // Add event listener for resize
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup function to remove the event listener
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, [functions])
 
     const calculatePaths = useCallback(() => {
