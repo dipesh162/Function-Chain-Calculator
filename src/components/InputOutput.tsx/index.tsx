@@ -16,7 +16,7 @@ interface InputOutputProps {
 const InputOutput = ({labelText, labelBgColor, inputValue, inputOnChange, dividerColor, inputOrder, inputBorderColor }:InputOutputProps) => {
 
     return (
-        <div className="w-[111px]">
+        <div className="w-[115px]">
             <Label
                 labelText={labelText}
                 labelBgColor={labelBgColor}

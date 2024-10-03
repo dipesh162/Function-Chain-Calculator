@@ -43,7 +43,7 @@ const FunctionCard =
                     id={`equation-${func.id}`}
                     value={func.equation}
                     onChange={(e) => onEquationChange(func.id, e.target.value)}
-                    className="w-full py-2 px-[11px] border border-[#D3D3D3] rounded-lg text-[12px] font-medium text-[#252525]"
+                    className="w-full h-[33px] py-2 px-[11px] border border-[#D3D3D3] rounded-lg text-[12px] font-medium text-[#252525]"
                     placeholder="Enter equation (e.g., x + 1)"
                 />
             </div>

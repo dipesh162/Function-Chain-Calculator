@@ -185,7 +185,7 @@ export default function FunctionChainCalculator() {
                         <path 
                             key={index} 
                             d={path} 
-                            strokeWidth="7" 
+                            strokeWidth="8" 
                             fill="none"
                             stroke="#AECDFA"
                         />
@@ -193,7 +193,7 @@ export default function FunctionChainCalculator() {
                 </svg>
                 <div className="flex flex-col gap-16 relative">
                     <div className="flex gap-16 justify-between items-start relative">
-                        <div className="relative self-end -right-12">
+                        <div className="relative self-end -mb-[1px] -right-12">
                             <InputOutput
                                 labelText='Initial value of x'
                                 labelBgColor='#E29A2D'
@@ -214,7 +214,7 @@ export default function FunctionChainCalculator() {
                                   }}
                             />
                         ))}
-                        <div className="relative self-end -left-12">
+                        <div className="relative self-end -mb-[1px] -left-12">
                             <InputOutput
                                 labelText='Final Output y'
                                 labelBgColor='#4CAF79'
