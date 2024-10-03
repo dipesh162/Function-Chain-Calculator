@@ -23,14 +23,29 @@ const initialFunctions: Function[] = [
 ]
 
 const validateEquation = (equation: string): boolean => {
-    const validOperators = /^[x0-9+\-*/^()\s]+$/
-    return validOperators.test(equation)
+    if (equation.trim() === '') return true; // Allow empty strings
+    const validOperators = /^[x0-9+\-*/^()\s]+$/;
+    let openParentheses = 0;
+
+    // Check for matching parentheses
+    for (const char of equation) {
+        if (char === '(') openParentheses++;
+        if (char === ')') openParentheses--;
+        if (openParentheses < 0) return false; // More closing than opening
+    }
+
+    return openParentheses === 0 && validOperators.test(equation);
 }
 
 const calculateResult = (x: number, equation: string): number => {
-    const sanitizedEquation = equation.replace(/\^/g, '**')
-    console.log(sanitizedEquation)
-    return eval(sanitizedEquation.replace(/x/g, x.toString()))
+    const sanitizedEquation = equation.replace(/\^/g, '**');
+
+    try {
+        return eval(sanitizedEquation.replace(/x/g, x.toString()));
+    } catch (error) {
+        console.error('Error evaluating equation:', error);
+        return 0; // Return a default value or handle error as needed
+    }
 }
 
 
@@ -114,14 +129,13 @@ export default function FunctionChainCalculator() {
         const executionOrder = [1, 2, 4, 5, 3]
 
         const updatedFunctions = functions.map(func => ({ ...func }))
-        // console.log('113, calculate chain')
+
         for (const id of executionOrder) {
+
             const funcIndex = updatedFunctions.findIndex(f => f.id === id)
             if (funcIndex !== -1) {
-                // console.log(117, result)
                 updatedFunctions[funcIndex].input = result
                 result = calculateResult(result, updatedFunctions[funcIndex].equation)
-                console.log(120, result)
                 updatedFunctions[funcIndex].output = result
             }
         }
@@ -139,7 +153,7 @@ export default function FunctionChainCalculator() {
         if (validateEquation(newEquation)) {
             setFunctions(prevFunctions =>
                 prevFunctions.map(func =>
-                func.id === id ? { ...func, equation: newEquation } : func
+                    func.id === id ? { ...func, equation: newEquation } : func
                 )
             )
         } else {
