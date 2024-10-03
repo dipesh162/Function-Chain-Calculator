@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef } from "react"
+// Components
 import Input from "./Input"
 import Label from "./Label"
 
@@ -12,26 +12,11 @@ interface InputOutputProps {
   inputBorderColor: string;
 }
 
-interface InputOutputRef {
-    getWidth: () => number; // Your custom method
-}
 
-const InputOutput = forwardRef<InputOutputRef, InputOutputProps>(
-    ({ labelText, labelBgColor, inputValue, inputOnChange, dividerColor, inputOrder, inputBorderColor }, ref) => {
-
-    // const inputOutputRef = useRef<{ getWidth: () => number}>(null);
-
-    // // Expose the width of the component to the parent
-    // useImperativeHandle(ref, () => ({
-    //     getWidth: () => {
-    //       return inputOutputRef.current ? inputOutputRef.current.offsetWidth : 0; // Return the width
-    //     },
-    // }));
+const InputOutput = ({labelText, labelBgColor, inputValue, inputOnChange, dividerColor, inputOrder, inputBorderColor }:InputOutputProps) => {
 
     return (
-        <div className="w-[111px]" 
-            // ref={inputOutputRef}
-        >
+        <div className="w-[111px]">
             <Label
                 labelText={labelText}
                 labelBgColor={labelBgColor}
@@ -45,6 +30,6 @@ const InputOutput = forwardRef<InputOutputRef, InputOutputProps>(
             />
         </div>
     )
-})
+}
 
 export default InputOutput

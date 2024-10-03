@@ -41,6 +41,7 @@ export default function FunctionChainCalculator() {
 
     const inputRefs = useRef<Array<HTMLDivElement | null>>([]);
     const outputRefs = useRef<Array<HTMLDivElement | null>>([]);
+    
     const [paths, setPaths] = useState<string[]>([])
 
 
@@ -179,13 +180,10 @@ export default function FunctionChainCalculator() {
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
-                                // inputRef={(el: any)=> inputRefs.current[func.id] = el}
-                                // outputRef={(el: any)=> outputRefs.current[func.id] = el}
                                 ref={{
-                                    inputRef: (el) => (inputRefs.current[func.id] = el),
-                                    outputRef: (el) => (outputRefs.current[func.id] = el),
+                                    inputRef: (el:HTMLDivElement) => (inputRefs.current[func.id] = el),
+                                    outputRef: (el: HTMLDivElement) => (outputRefs.current[func.id] = el),
                                   }}
-
                             />
                         ))}
                         <div className="relative self-end -left-12">
@@ -206,8 +204,6 @@ export default function FunctionChainCalculator() {
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
-                                inputRef={(el: any)=> inputRefs.current[func.id] = el}
-                                outputRef={(el: any)=> outputRefs.current[func.id] = el}
                                 ref={{
                                     inputRef: (el) => (inputRefs.current[func.id] = el),
                                     outputRef: (el) => (outputRefs.current[func.id] = el),

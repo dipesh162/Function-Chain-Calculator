@@ -7,7 +7,7 @@ import ConnectingVertex from "../ConnectingVertex"
 
 interface props{
     inputValue: number, 
-    inputOnChange?: Function, 
+    inputOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     inputOrder?: string
     inputBorderColor: string
     dividerColor: string
