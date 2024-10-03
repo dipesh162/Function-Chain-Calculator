@@ -175,7 +175,7 @@ export default function FunctionChainCalculator() {
                                 inputBorderColor='#E29A2D'
                             />
                         </div>
-                        {functions.slice(0, 3).map((func, index) => (
+                        {functions.slice(0, 3).map((func, _) => (
                             <FunctionCard
                                 key={func.id}
                                 func={func}
@@ -205,8 +205,8 @@ export default function FunctionChainCalculator() {
                                 func={func}
                                 onEquationChange={handleEquationChange}
                                 ref={{
-                                    inputRef: (el) => (inputRefs.current[func.id] = el),
-                                    outputRef: (el) => (outputRefs.current[func.id] = el),
+                                    inputRef: (el: HTMLDivElement) => (inputRefs.current[func.id] = el),
+                                    outputRef: (el: HTMLDivElement) => (outputRefs.current[func.id] = el),
                                 }}
                             />
                         ))}
