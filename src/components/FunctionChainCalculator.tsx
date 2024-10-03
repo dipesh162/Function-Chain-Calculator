@@ -1,5 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+// React
+import { useState, useEffect, useCallback, useRef } from 'react'
+
+// Components
 import FunctionCard from './FunctionCard'
+import InputOutput from './InputOutput.tsx'
 
 type Function = {
     id: number
@@ -7,14 +11,15 @@ type Function = {
     nextFunction: number | null
     input: number
     output: number
+    path?: string
 }
 
 const initialFunctions: Function[] = [
-    { id: 1, equation: 'x^2', nextFunction: 2, input: 0, output: 0 },
-    { id: 2, equation: '2*x+4', nextFunction: 4, input: 0, output: 0 },
-    { id: 3, equation: 'x^2+20', nextFunction: null, input: 0, output: 0 },
-    { id: 4, equation: 'x-2', nextFunction: 5, input: 0, output: 0 },
-    { id: 5, equation: 'x/2', nextFunction: 3, input: 0, output: 0 },
+    { id: 1, equation: 'x^2', nextFunction: 2, input: 0, output: 0, path: 'quadratic'},
+    { id: 2, equation: '2*x+4', nextFunction: 4, input: 0, output: 0, path: 'cubic'},
+    { id: 3, equation: 'x^2+20', nextFunction: null, input: 0, output: 0,},
+    { id: 4, equation: 'x-2', nextFunction: 5, input: 0, output: 0, path: 'quadratic' },
+    { id: 5, equation: 'x/2', nextFunction: 3, input: 0, output: 0, path: 'quadratic'  },
 ]
 
 const validateEquation = (equation: string): boolean => {
@@ -23,18 +28,81 @@ const validateEquation = (equation: string): boolean => {
 }
 
 const calculateResult = (x: number, equation: string): number => {
-    console.log(x, equation)
     const sanitizedEquation = equation.replace(/\^/g, '**')
     return eval(sanitizedEquation.replace(/x/g, x.toString()))
 }
 
+
 export default function FunctionChainCalculator() {
+
     const [functions, setFunctions] = useState<Function[]>(initialFunctions)
     const [initialInput, setInitialInput] = useState<number>(2)
+
+    const inputRefs = useRef<Array<HTMLDivElement | null>>([]);
+    const outputRefs = useRef<Array<HTMLDivElement | null>>([]);
+    const [paths, setPaths] = useState<string[]>([])
+
 
     useEffect(() => {
         calculateChain()
     }, [initialInput, JSON.stringify(functions)])
+
+    useEffect(()=>{
+        calculatePaths()
+    }, [functions])
+
+    const calculatePaths = useCallback(() => {
+        const newPaths: string[] = [];
+    
+const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
+    const startX = startPos.right;
+    const startY = startPos.top + startPos.height / 2;
+    const endX = endPos.left;
+    const endY = endPos.top + endPos.height / 2;
+
+    if (pathType === 'quadratic') {
+        // Control point for U shape
+        const controlX = (startX + endX) / 2;
+        const controlY = Math.max(startY, endY) + 50; // Adjust this value to control the depth of the "U"
+
+        // Quadratic Bezier curve
+        return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+    } else if (pathType === 'cubic') {
+        // Control points for S shape
+        const control1X = (startX + endX) / 3;  // First control point on the left
+        const control1Y = startY - 50;           // Pull up for the "S"
+        const control2X = (startX + endX) * 2 / 3; // Second control point on the right
+        const control2Y = endY + 50;              // Pull down for the "S"
+
+        // Cubic Bezier curve
+        return `M${startX},${startY} C${control1X},${control1Y} ${control2X},${control2Y} ${endX},${endY}`;
+    }
+
+    return ''; // Fallback if no path type matches
+}
+
+        
+    
+        functions.forEach((func) => {
+            if (func.nextFunction !== null) {
+                const outputElem = outputRefs.current[func.id];
+                const nextInputElem = inputRefs.current[func.nextFunction];
+    
+                if (outputElem && nextInputElem) {
+                    const outputPos = outputElem.getBoundingClientRect();
+                    const inputPos = nextInputElem.getBoundingClientRect();
+                    const pathType = func.path
+                    const path = createPath(outputPos, inputPos, pathType);
+                    newPaths.push(path);
+                }
+            }
+        });
+    
+        setPaths(newPaths);
+    }, [functions]);
+    
+    
+
 
     // Memoized calculateChain function to avoid re-creation on each render
     const calculateChain = useCallback(() => {
@@ -68,72 +136,80 @@ export default function FunctionChainCalculator() {
                 func.id === id ? { ...func, equation: newEquation } : func
                 )
             )
+        } else {
+            alert('Invalid equation. Please use valid operators and "x".')
         }
     }
 
+
     return (
-        <div className="bg-[#F8F8F8] min-h-screen flex items-center justify-center p-4">
-            <div className="bg-white rounded-[20px] p-8 shadow-lg max-w-6xl w-full">
-                <div className="flex flex-col space-y-16 relative">
-                    <div className="flex justify-between items-start relative">
-                        <div className="w-[120px] text-center">
-                        <div className="text-sm font-medium text-[#F4A261] mb-2">Initial value of x</div>
-                        <input
-                            type="number"
-                            value={initialInput}
-                            onChange={(e) => setInitialInput(Number(e.target.value))}
-                            className="w-full p-2 border border-[#E5E7EB] rounded-md text-center text-lg font-semibold"
+        <div className="bg-[#F8F8F8] min-h-screen flex items-center justify-center before:opacity-40 p-4 bg-[url('/images/bg.png')]">
+            <div className="max-w-6xl w-full">
+                {/* SVG for Paths */}
+                <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-[11] mix-blend-multiply">
+                    {paths.map((path, index) => (
+                        <path 
+                            key={index} 
+                            d={path} 
+                            strokeWidth="7" 
+                            fill="none"
+                            stroke="#AECDFA"
                         />
+                    ))}
+                </svg>
+                <div className="flex flex-col gap-16 relative">
+                    <div className="flex gap-16 justify-between items-start relative">
+                        <div className="relative self-end -right-12">
+                            <InputOutput
+                                labelText='Initial value of x'
+                                labelBgColor='#E29A2D'
+                                inputValue={initialInput}
+                                inputOnChange={(e:any) => setInitialInput(Number(e.target.value))}
+                                dividerColor='#FFEED5'
+                                inputBorderColor='#E29A2D'
+                            />
                         </div>
-                        {functions.slice(0, 3).map((func, _) => (
+                        {functions.slice(0, 3).map((func, index) => (
                             <FunctionCard
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
+                                // inputRef={(el: any)=> inputRefs.current[func.id] = el}
+                                // outputRef={(el: any)=> outputRefs.current[func.id] = el}
+                                ref={{
+                                    inputRef: (el) => (inputRefs.current[func.id] = el),
+                                    outputRef: (el) => (outputRefs.current[func.id] = el),
+                                  }}
+
                             />
                         ))}
-                        <div className="w-[120px] text-center">
-                            <div className="text-sm font-medium text-[#2A9D8F] mb-2">Final Output y</div>
-                            <div className="w-full p-2 border border-[#E5E7EB] rounded-md text-center text-lg font-semibold">
-                                {functions[2].output}
-                            </div>
+                        <div className="relative self-end -left-12">
+                            <InputOutput
+                                labelText='Final Output y'
+                                labelBgColor='#4CAF79'
+                                inputValue={functions[2].output}
+                                inputOnChange={()=> {}}
+                                dividerColor='#C5F2DA'
+                                inputOrder='reversed'
+                                inputBorderColor='#4CAF79'
+                            />
                         </div>
                     </div>
-                    <div className="flex justify-center items-start relative space-x-16">
+                    <div className="flex gap-16 justify-center items-start relative">
                         {functions.slice(3, 5).map((func, _) => (
                             <FunctionCard
                                 key={func.id}
                                 func={func}
                                 onEquationChange={handleEquationChange}
+                                inputRef={(el: any)=> inputRefs.current[func.id] = el}
+                                outputRef={(el: any)=> outputRefs.current[func.id] = el}
+                                ref={{
+                                    inputRef: (el) => (inputRefs.current[func.id] = el),
+                                    outputRef: (el) => (outputRefs.current[func.id] = el),
+                                }}
                             />
                         ))}
                     </div>
-                    <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-                        <path
-                            d="M120 50 L220 50"
-                            fill="none"
-                            stroke="#93C5FD"
-                            strokeWidth="2"
-                        />
-                        <path
-                            d="M360 50 Q400 50 400 100 T440 150 Q480 150 480 200 T520 250"
-                            fill="none"
-                            stroke="#93C5FD"
-                            strokeWidth="2"
-                        />
-                        <path
-                            d="M680 250 Q720 250 720 200 T760 150 Q800 150 800 100 T840 50"
-                            fill="none"
-                            stroke="#93C5FD"
-                            strokeWidth="2"
-                        />
-                        <path
-                            d="M980 50 L1080 50"
-                            fill="none"
-                            stroke="#93C5FD"
-                            strokeWidth="2"
-                        />
-                    </svg>
                 </div>
             </div>
         </div>
