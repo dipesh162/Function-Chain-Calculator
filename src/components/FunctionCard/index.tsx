@@ -1,6 +1,5 @@
 // React
-import React, { forwardRef } from "react"
-
+import React from "react"
 
 // Components
 import ConnectingVertex from "../ConnectingVertex"
@@ -22,9 +21,6 @@ interface FunctionCardProps {
     func: Function
     onEquationChange: (id: number, equation: string) => void
     refObj: any
-    // inputRef: object
-    // inputRef: React.RefObject<HTMLDivElement>;
-    // outputRef: React.RefObject<HTMLDivElement>;
 }
   
 
