@@ -4,60 +4,29 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 // Components
 import FunctionCard from './FunctionCard'
 import InputOutput from './InputOutput.tsx'
+import Path from './Path.tsx/index.tsx'
 
-type Function = {
-    id: number
-    equation: string
-    nextFunction: number | null
-    input: number
-    output: number
-    path?: string | null
-}
+// Static
+import functionsData from '../static/functionsData.ts'
 
-const initialFunctions: Function[] = [
-    { id: 1, equation: 'x^2', nextFunction: 2, input: 0, output: 0, path: 'quadratic'},
-    { id: 2, equation: '2*x+4', nextFunction: 4, input: 0, output: 0, path: 'cubic'},
-    { id: 3, equation: 'x^2+20', nextFunction: null, input: 0, output: 0, path: null},
-    { id: 4, equation: 'x-2', nextFunction: 5, input: 0, output: 0, path: 'quadratic' },
-    { id: 5, equation: 'x/2', nextFunction: 3, input: 0, output: 0, path: 'bottomTopQuadratic'  },
-]
+// Types
+import { FunctionType } from '../types/functionTypes.ts'
 
-const validateEquation = (equation: string): boolean => {
-    if (equation.trim() === '') return true; // Allow empty strings
-    const validOperators = /^[x0-9+\-*/^()\s]+$/;
-    let openParentheses = 0;
+// Helpers
+import calculateResult from '../helpers/calculateResult.ts'
+import validateEquation from '../helpers/validateEquation.ts'
 
-    // Check for matching parentheses
-    for (const char of equation) {
-        if (char === '(') openParentheses++;
-        if (char === ')') openParentheses--;
-        if (openParentheses < 0) return false; // More closing than opening
-    }
-
-    return openParentheses === 0 && validOperators.test(equation);
-}
-
-const calculateResult = (x: number, equation: string): number => {
-    const sanitizedEquation = equation.replace(/\^/g, '**');
-
-    try {
-        return eval(sanitizedEquation.replace(/x/g, x.toString()));
-    } catch (error) {
-        console.error('Error evaluating equation:', error);
-        return 0; // Return a default value or handle error as needed
-    }
-}
 
 
 export default function FunctionChainCalculator() {
 
-    const [functions, setFunctions] = useState<Function[]>(initialFunctions)
+    const [functions, setFunctions] = useState<FunctionType[]>(functionsData)
     const [initialInput, setInitialInput] = useState<number>(2)
+    const [paths, setPaths] = useState<string[]>([])
 
     const inputRefs = useRef<Array<HTMLDivElement | null>>([]);
     const outputRefs = useRef<Array<HTMLDivElement | null>>([]);
     
-    const [paths, setPaths] = useState<string[]>([])
 
 
     useEffect(() => {
@@ -182,12 +151,12 @@ export default function FunctionChainCalculator() {
                 {/* SVG for Paths */}
                 <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-[11] mix-blend-multiply">
                     {paths.map((path, index) => (
-                        <path 
-                            key={index} 
-                            d={path} 
-                            strokeWidth="8" 
-                            fill="none"
-                            stroke="#AECDFA"
+                        <Path
+                            key={index}
+                            path={path} 
+                            strokeWidth='8' 
+                            fill='none'
+                            stroke='#AECDFA'
                         />
                     ))}
                 </svg>
