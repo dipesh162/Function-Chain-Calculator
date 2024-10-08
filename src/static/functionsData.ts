@@ -1,5 +1,5 @@
 // Types
-import { FunctionType } from "../types/functionTypes"
+import { FunctionType } from "../types/function-types"
 
 const functionsData : FunctionType[] = [
     { id: 1, equation: 'x^2', nextFunction: 2, input: 0, output: 0, path: 'quadratic'},

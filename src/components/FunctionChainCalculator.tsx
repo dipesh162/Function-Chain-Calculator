@@ -6,15 +6,16 @@ import FunctionCard from './FunctionCard'
 import InputOutput from './InputOutput.tsx'
 import Path from './Path.tsx/index.tsx'
 
-// Static
+// Static Data
 import functionsData from '../static/functionsData.ts'
 
 // Types
-import { FunctionType } from '../types/functionTypes.ts'
+import { FunctionType } from '../types/function-types.ts'
 
 // Helpers
-import calculateResult from '../helpers/calculateResult.ts'
-import validateEquation from '../helpers/validateEquation.ts'
+import calculateResult from '../helpers/calculate-result.ts'
+import validateEquation from '../helpers/validate-equation.ts'
+import createPath from '../helpers/create-path.ts'
 
 
 
@@ -27,7 +28,6 @@ export default function FunctionChainCalculator() {
     const inputRefs = useRef<Array<HTMLDivElement | null>>([]);
     const outputRefs = useRef<Array<HTMLDivElement | null>>([]);
     
-
 
     useEffect(() => {
         calculateChain()
@@ -53,39 +53,6 @@ export default function FunctionChainCalculator() {
 
     const calculatePaths = useCallback(() => {
         const newPaths: string[] = [];
-    
-        const createPath = (startPos: DOMRect, endPos: DOMRect, pathType: string) => {
-            const startX = startPos.right - (8);
-            const startY = startPos.top + startPos.height / 2  - (-1);
-            const endX = endPos.left + (8);
-            const endY = endPos.top + endPos.height / 2   - (-1);
-
-            if (pathType === 'quadratic') {
-                // Control point for U shape
-                const controlX = (startX + endX) / 2;
-                const controlY = Math.max(startY, endY) + 50; // Adjust this value to control the depth of the "U"
-
-                // Quadratic Bezier curve
-                return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
-            } else if (pathType === 'cubic') {
-                // Control points for S shape
-                const control1X = 1029  // First control point on the left
-                const control1Y = 556           // Pull up for the "S"
-                const control2X = 771 // Second control point on the right
-                const control2Y = 525              // Pull down for the "S"
-
-                return `M${startX},${startY} C${control1X},${control1Y} ${control2X},${control2Y} ${endX},${endY}`;
-            } else if(pathType === 'bottomTopQuadratic'){
-                const controlX = 1264
-                const controlY = 571
-
-                // Quadratic Bezier curve
-                return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;              
-            }
-
-            return ''; // Fallback if no path type matches
-        }
-
     
         functions.forEach((func) => {
             if (func.path && func.nextFunction) {

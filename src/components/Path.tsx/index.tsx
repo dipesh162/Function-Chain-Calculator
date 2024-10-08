@@ -1,9 +1,6 @@
-interface PathType {
-    path: string;
-    strokeWidth: string;
-    fill: string;
-    stroke: string;
-}
+// Type
+import { PathType } from "../../types/path-type"
+
 
 function Path({path, strokeWidth, fill, stroke}: PathType) {
   return (
